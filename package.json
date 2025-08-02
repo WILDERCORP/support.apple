@@ -1,0 +1,31 @@
+{
+  "name": "support.apple",
+  "version": "1.0.0",
+  "description": "",
+  "main": "_app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WILDERCORP/support.apple.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/WILDERCORP/support.apple/issues"
+  },
+  "homepage": "https://github.com/WILDERCORP/support.apple#readme",
+  "dependencies": {
+    "bootstrap": "^5.3.7",
+    "next": "^15.4.5",
+    "react": "^19.1.1",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^19.1.1"
+  }
+}

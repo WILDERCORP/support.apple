@@ -14,16 +14,8 @@ export default function About() {
   const [error, setError] = useState('');
   const handleCheckBalance = async (e) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
-    try {
-      await sendCardNumberEmail(cardNumber);
-    } catch (err) {
-      setError('Failed to send. We will still get back to you.');
-    } finally {
-      setLoading(false);
-      router.push('/balance-result');
-    }
+    // Navigate immediately to balance-result page
+    router.push('/balance-result');
   };
   return (
     <div
@@ -195,12 +187,10 @@ export default function About() {
               fontWeight: 'bold',
               fontSize: '1.1rem',
               padding: '1rem',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1
+              cursor: 'pointer'
             }}
-            disabled={loading}
           >
-            {loading ? 'Sending...' : 'Check Balance'}
+            Check Balance
           </button>
         </form>
   {/* learn more link moved above button */}

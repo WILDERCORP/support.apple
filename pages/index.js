@@ -195,10 +195,14 @@ export default function Home() {
             })}`}
           </div>
         </div>
+
+        {/* Spacer to push bottom elements down */}
+        <div style={{ flex: 1 }}></div>
+
         {/* Full-width horizontal divider */}
         <hr style={{
           width: '100vw',
-          margin: '2.5rem 0 0 0',
+          margin: '0',
           borderTop: '1.5px solid #ddd',
           position: 'relative',
           left: '50%',
@@ -211,6 +215,7 @@ export default function Home() {
             width: '100%',
             maxWidth: '900px',
             margin: '1.5rem auto 0 auto',
+            paddingBottom: '1.5rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-start',
@@ -262,7 +267,7 @@ export default function Home() {
         style={{
           width: '100vw',
           background: '#f5f5f7',
-          marginTop: '2.5rem',
+          marginTop: '0',
           padding: '1.2rem 0',
           display: 'flex',
           justifyContent: 'center',

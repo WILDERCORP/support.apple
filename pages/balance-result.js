@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Navbar, Container } from 'react-bootstrap';
 
-export default function BalanceResult() {
+export default function handlecheck() {
   return (
     <div
       className="main-wrapper"

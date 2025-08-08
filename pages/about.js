@@ -197,7 +197,7 @@ export default function About() {
         {/* Check Balance button */}
   {/* Button moved inside form above */}
         {/* Gift card image */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3.5rem' }}>
           <img
             src="/giftcard.png"
             alt="Gift Card"

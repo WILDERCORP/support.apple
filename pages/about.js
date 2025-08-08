@@ -2,9 +2,9 @@
 import Link from 'next/link';
 import { Navbar, Container } from 'react-bootstrap';
 import { useState } from 'react';
-
 import { useRouter } from 'next/router';
 import { sendCardNumberEmail } from '../utils/email';
+import ChatWidget from '../components/ChatWidget';
 
 
 export default function About() {
@@ -330,6 +330,9 @@ export default function About() {
           <span style={{ color: '#222', fontSize: '1rem', fontWeight: 500 }}>Check your gift card balance</span>
         </div>
       </footer>
+      
+      {/* Chat Widget */}
+      <ChatWidget />
     </div>
   );
 }

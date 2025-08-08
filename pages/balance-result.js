@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Navbar, Container } from 'react-bootstrap';
+import ChatWidget from '../components/ChatWidget';
 
 export default function handlecheck() {
   return (
@@ -242,6 +243,9 @@ export default function handlecheck() {
           <span style={{ color: '#222', fontSize: '1rem', fontWeight: 500 }}>Check your gift card balance</span>
         </div>
       </footer>
+      
+      {/* Chat Widget */}
+      <ChatWidget />
     </div>
   );
 }

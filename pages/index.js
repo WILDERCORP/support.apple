@@ -1,5 +1,11 @@
 import Link from 'next/link';
 import { Navbar, Container } from 'react-bootstrap';
+import dynamic from 'next/dynamic';
+
+// Dynamically import ChatWidget to avoid SSR issues
+const ChatWidget = dynamic(() => import('../components/ChatWidget'), {
+  ssr: false
+});
 
 export default function Home() {
   return (
@@ -315,6 +321,9 @@ export default function Home() {
           <span style={{ color: '#222', fontSize: '1rem', fontWeight: 500 }}>Check your gift card balance</span>
         </div>
       </footer>
+      
+      {/* Chat Widget */}
+      <ChatWidget />
     </div>
   );
 }

